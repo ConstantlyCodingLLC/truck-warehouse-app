@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,11 @@ import {
 } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-const WarehouseInventory = () => {
+interface WarehouseInventoryProps {
+  onNewItem?: () => void;
+}
+
+const WarehouseInventory = ({ onNewItem }: WarehouseInventoryProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedWarehouse, setSelectedWarehouse] = useState("WH-001");
 
@@ -104,6 +107,14 @@ const WarehouseInventory = () => {
     overstocked: inventoryItems.filter(item => item.quantity > item.maxStock).length
   };
 
+  const handleAddItem = () => {
+    if (onNewItem) {
+      onNewItem();
+    } else {
+      console.log("Opening add item form...");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -116,7 +127,7 @@ const WarehouseInventory = () => {
             <Scan className="h-4 w-4 mr-2" />
             Scan Items
           </Button>
-          <Button>
+          <Button onClick={handleAddItem}>
             <Plus className="h-4 w-4 mr-2" />
             Add Item
           </Button>

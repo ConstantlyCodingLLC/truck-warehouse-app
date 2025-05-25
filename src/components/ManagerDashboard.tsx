@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import LoadManagement from "@/components/LoadManagement";
 import FleetStatus from "@/components/FleetStatus";
 import WarehouseInventory from "@/components/WarehouseInventory";
@@ -9,6 +10,9 @@ import ManagerHeader from "@/components/ManagerHeader";
 import ManagerStats from "@/components/ManagerStats";
 import OverviewTab from "@/components/OverviewTab";
 import ComplianceTab from "@/components/ComplianceTab";
+import NewLoadForm from "@/components/forms/NewLoadForm";
+import NewInventoryItemForm from "@/components/forms/NewInventoryItemForm";
+import NewAuditForm from "@/components/forms/NewAuditForm";
 import { useToast } from "@/hooks/use-toast";
 
 interface ManagerDashboardProps {
@@ -17,14 +21,24 @@ interface ManagerDashboardProps {
 
 const ManagerDashboard = ({ onLogout }: ManagerDashboardProps) => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [showNewLoadForm, setShowNewLoadForm] = useState(false);
+  const [showNewInventoryForm, setShowNewInventoryForm] = useState(false);
+  const [showNewAuditForm, setShowNewAuditForm] = useState(false);
   const { toast } = useToast();
 
   const handleNewLoad = () => {
-    toast({
-      title: "New Load",
-      description: "Switching to Load Management to create new load...",
-    });
+    setShowNewLoadForm(true);
     setActiveTab("loads");
+  };
+
+  const handleNewInventoryItem = () => {
+    setShowNewInventoryForm(true);
+    setActiveTab("warehouse");
+  };
+
+  const handleNewAudit = () => {
+    setShowNewAuditForm(true);
+    setActiveTab("audit");
   };
 
   return (
@@ -49,7 +63,7 @@ const ManagerDashboard = ({ onLogout }: ManagerDashboardProps) => {
           </TabsContent>
 
           <TabsContent value="loads">
-            <LoadManagement />
+            <LoadManagement onNewLoad={handleNewLoad} />
           </TabsContent>
 
           <TabsContent value="fleet">
@@ -57,11 +71,11 @@ const ManagerDashboard = ({ onLogout }: ManagerDashboardProps) => {
           </TabsContent>
 
           <TabsContent value="warehouse">
-            <WarehouseInventory />
+            <WarehouseInventory onNewItem={handleNewInventoryItem} />
           </TabsContent>
 
           <TabsContent value="audit">
-            <AuditManagement />
+            <AuditManagement onNewAudit={handleNewAudit} />
           </TabsContent>
 
           <TabsContent value="compliance">
@@ -69,6 +83,25 @@ const ManagerDashboard = ({ onLogout }: ManagerDashboardProps) => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Form Modals */}
+      <Dialog open={showNewLoadForm} onOpenChange={setShowNewLoadForm}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <NewLoadForm onClose={() => setShowNewLoadForm(false)} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showNewInventoryForm} onOpenChange={setShowNewInventoryForm}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <NewInventoryItemForm onClose={() => setShowNewInventoryForm(false)} />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showNewAuditForm} onOpenChange={setShowNewAuditForm}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <NewAuditForm onClose={() => setShowNewAuditForm(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
