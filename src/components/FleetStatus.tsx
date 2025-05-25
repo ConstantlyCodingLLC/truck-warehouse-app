@@ -2,6 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Truck, 
   MapPin, 
@@ -13,6 +14,8 @@ import {
 } from "lucide-react";
 
 const FleetStatus = () => {
+  const { toast } = useToast();
+
   const trucks = [
     {
       id: "TR-101",
@@ -81,6 +84,22 @@ const FleetStatus = () => {
       issues: ["Engine service", "Brake inspection"]
     }
   ];
+
+  const handleViewDetails = (truckId: string) => {
+    toast({
+      title: "Truck Details",
+      description: `Viewing details for ${truckId}`,
+    });
+    console.log("Viewing truck details:", truckId);
+  };
+
+  const handleAssignLoad = (truckId: string) => {
+    toast({
+      title: "Assign Load",
+      description: `Assigning load to ${truckId}`,
+    });
+    console.log("Assigning load to truck:", truckId);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -195,11 +214,19 @@ const FleetStatus = () => {
                 </div>
 
                 <div className="flex space-x-2 justify-end">
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleViewDetails(truck.id)}
+                  >
                     View Details
                   </Button>
                   {truck.status === "Available" && (
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                    <Button 
+                      size="sm" 
+                      className="bg-blue-600 hover:bg-blue-700"
+                      onClick={() => handleAssignLoad(truck.id)}
+                    >
                       Assign Load
                     </Button>
                   )}

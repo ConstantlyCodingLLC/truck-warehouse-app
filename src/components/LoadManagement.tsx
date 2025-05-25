@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Package, 
   MapPin, 
@@ -19,6 +20,7 @@ import {
 const LoadManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const { toast } = useToast();
 
   const loads = [
     {
@@ -83,6 +85,46 @@ const LoadManagement = () => {
     }
   ];
 
+  const handleCreateNewLoad = () => {
+    toast({
+      title: "New Load",
+      description: "Opening load creation form...",
+    });
+    console.log("Creating new load...");
+  };
+
+  const handleViewLoad = (loadId: string) => {
+    toast({
+      title: "Load Details",
+      description: `Viewing details for ${loadId}`,
+    });
+    console.log("Viewing load:", loadId);
+  };
+
+  const handleEditLoad = (loadId: string) => {
+    toast({
+      title: "Edit Load",
+      description: `Editing ${loadId}`,
+    });
+    console.log("Editing load:", loadId);
+  };
+
+  const handleAssignLoad = (loadId: string) => {
+    toast({
+      title: "Assign Load",
+      description: `Assigning ${loadId} to driver and truck`,
+    });
+    console.log("Assigning load:", loadId);
+  };
+
+  const handleLoadMore = () => {
+    toast({
+      title: "Loading",
+      description: "Loading more results...",
+    });
+    console.log("Loading more results...");
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "In Transit": return "bg-blue-100 text-blue-800";
@@ -96,6 +138,19 @@ const LoadManagement = () => {
     return priority === "High" ? "bg-red-100 text-red-800" : "bg-gray-100 text-gray-800";
   };
 
+  const filteredLoads = loads.filter(load => {
+    const matchesSearch = load.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         load.driver.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         load.destination.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === "all" || 
+                         (statusFilter === "in-transit" && load.status === "In Transit") ||
+                         (statusFilter === "pending" && load.status === "Pending Assignment") ||
+                         (statusFilter === "delivered" && load.status === "Delivered");
+    
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <Card>
       <CardHeader>
@@ -107,7 +162,10 @@ const LoadManagement = () => {
             </CardTitle>
             <CardDescription>Assign, track, and manage all freight loads</CardDescription>
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <Button 
+            className="bg-blue-600 hover:bg-blue-700"
+            onClick={handleCreateNewLoad}
+          >
             <Plus className="h-4 w-4 mr-2" />
             Create New Load
           </Button>
@@ -140,7 +198,7 @@ const LoadManagement = () => {
         </div>
 
         <div className="space-y-4">
-          {loads.map((load) => (
+          {filteredLoads.map((load) => (
             <div key={load.id} className="border rounded-lg p-6 hover:shadow-md transition-shadow">
               <div className="grid lg:grid-cols-6 gap-4 items-center">
                 <div className="lg:col-span-2">
@@ -193,16 +251,28 @@ const LoadManagement = () => {
                 </div>
 
                 <div className="lg:col-span-2 flex space-x-2 justify-end">
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleViewLoad(load.id)}
+                  >
                     <Eye className="h-4 w-4 mr-1" />
                     View
                   </Button>
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleEditLoad(load.id)}
+                  >
                     <Edit className="h-4 w-4 mr-1" />
                     Edit
                   </Button>
                   {load.status === "Pending Assignment" && (
-                    <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                    <Button 
+                      size="sm" 
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() => handleAssignLoad(load.id)}
+                    >
                       Assign
                     </Button>
                   )}
@@ -212,8 +282,16 @@ const LoadManagement = () => {
           ))}
         </div>
 
+        {filteredLoads.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            No loads found matching your criteria.
+          </div>
+        )}
+
         <div className="mt-6 text-center">
-          <Button variant="outline">Load More Results</Button>
+          <Button variant="outline" onClick={handleLoadMore}>
+            Load More Results
+          </Button>
         </div>
       </CardContent>
     </Card>

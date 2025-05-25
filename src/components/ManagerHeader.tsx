@@ -5,9 +5,19 @@ import { Truck, ArrowLeft, Plus } from "lucide-react";
 
 interface ManagerHeaderProps {
   onLogout: () => void;
+  onNewLoad?: () => void;
 }
 
-const ManagerHeader = ({ onLogout }: ManagerHeaderProps) => {
+const ManagerHeader = ({ onLogout, onNewLoad }: ManagerHeaderProps) => {
+  const handleNewLoad = () => {
+    if (onNewLoad) {
+      onNewLoad();
+    } else {
+      console.log("Creating new load...");
+      // TODO: Implement new load creation
+    }
+  };
+
   return (
     <header className="bg-white shadow-sm border-b">
       <div className="container mx-auto px-4 py-4">
@@ -32,7 +42,10 @@ const ManagerHeader = ({ onLogout }: ManagerHeaderProps) => {
             <Badge variant="outline" className="text-green-600 border-green-600">
               System Online
             </Badge>
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button 
+              className="bg-blue-600 hover:bg-blue-700"
+              onClick={handleNewLoad}
+            >
               <Plus className="h-4 w-4 mr-2" />
               New Load
             </Button>
