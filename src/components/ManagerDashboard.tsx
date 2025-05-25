@@ -13,10 +13,13 @@ import {
   CheckCircle, 
   AlertTriangle, 
   Plus,
-  ArrowLeft
+  ArrowLeft,
+  Warehouse
 } from "lucide-react";
 import LoadManagement from "@/components/LoadManagement";
 import FleetStatus from "@/components/FleetStatus";
+import WarehouseInventory from "@/components/WarehouseInventory";
+import AuditManagement from "@/components/AuditManagement";
 
 interface ManagerDashboardProps {
   onLogout: () => void;
@@ -84,10 +87,12 @@ const ManagerDashboard = ({ onLogout }: ManagerDashboardProps) => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="loads">Load Management</TabsTrigger>
             <TabsTrigger value="fleet">Fleet Status</TabsTrigger>
+            <TabsTrigger value="warehouse">Warehouse</TabsTrigger>
+            <TabsTrigger value="audit">Audit</TabsTrigger>
             <TabsTrigger value="compliance">Compliance</TabsTrigger>
           </TabsList>
 
@@ -162,6 +167,14 @@ const ManagerDashboard = ({ onLogout }: ManagerDashboardProps) => {
 
           <TabsContent value="fleet">
             <FleetStatus />
+          </TabsContent>
+
+          <TabsContent value="warehouse">
+            <WarehouseInventory />
+          </TabsContent>
+
+          <TabsContent value="audit">
+            <AuditManagement />
           </TabsContent>
 
           <TabsContent value="compliance">
